@@ -1,0 +1,14 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+int main() { 
+  printf("Enter your message: "); 
+  char* msg = NULL;
+  char** msgPointer = &msg;
+  int size = 32;
+
+  getline(msgPointer, &size, stdin);
+  printf("%s\n", msg);
+
+}

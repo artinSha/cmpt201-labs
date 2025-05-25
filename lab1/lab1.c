@@ -1,0 +1,23 @@
+#include <stdio.h>
+#define _POSIX_C_SOURCE 200809L
+#include <stdlib.h>
+#include <string.h>
+
+int main() {
+  printf("Enter your message: ");
+  char *msg = NULL;
+  char **msgPointer = &msg;
+  size_t size = 32;
+
+  getline(msgPointer, &size, stdin);
+
+  char *savePtr = NULL;
+  char *delimiter = " ";
+  char *initValue = strtok_r(msg, delimiter, &savePtr);
+
+  while (initValue != NULL) {
+    printf("%s\n", initValue);
+    initValue = strtok_r(NULL, delimiter, &savePtr);
+  }
+  free(msg);
+}
