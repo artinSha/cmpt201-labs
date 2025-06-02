@@ -1,0 +1,13 @@
+#include <stdio.h>
+#define _POSIX_C_SOURCE 200809L
+
+int main() {
+  char *str = NULL;
+  size_t size = 0;
+  getline(&str, &size, stdin);
+  printf("%s", str);
+  printf("Buffer size: %zu\n", size);
+
+  free(str);
+  return 0;
+}

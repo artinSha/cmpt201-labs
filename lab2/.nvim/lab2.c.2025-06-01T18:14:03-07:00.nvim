@@ -1,0 +1,47 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <unistd.h>
+#define _POSIX_C_SOURCE 200809L
+
+int main() {
+  char *str = NULL;
+  size_t size = 0;
+
+  printf("Enter a program: ");
+  getline(&str, &size, stdin);
+
+  // Get rid of ending newline character
+  if (str != NULL) {
+    size_t len = strlen(str);
+    if (len > 0 && str[len - 1] == '\n') {
+      str[len - 1] = '\0';
+    }
+  }
+
+  // Make a copy of str so strtok() doesn't mess it up
+  char *tempStr = malloc(strlen(str) + 1);
+  if (tempStr != NULL) {
+    strcpy(tempStr, str);
+  }
+  char delimiter = '/';
+  char *savePtr = NULL;
+  char *initValue = strtok_r(tempStr, &delimiter, &savePtr);
+  char *token = NULL;
+
+  // Iterate through the string to find last argument
+  while (initValue != NULL) {
+    token = initValue;
+    initValue = strtok_r(NULL, &delimiter, &savePtr);
+  }
+
+  printf("%s\n", str);
+  printf("%s\n", token);
+
+  execl(str, token, NULL);
+
+  printf("we shouldn't make it here");
+  free(str);
+  free(tempStr);
+  return 0;
+}
