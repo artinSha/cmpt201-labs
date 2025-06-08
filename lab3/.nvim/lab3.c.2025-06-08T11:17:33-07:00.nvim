@@ -1,0 +1,19 @@
+#include <stdio.h>
+#include <string.h>
+POSIX
+int main() {
+  char *arr[5] = {NULL};
+  int counter = 0;
+
+  while (1) {
+    char *str = NULL;
+    size_t size = 0;
+    getline(&str, &size, stdin);
+
+    //Maybe reallocate here eventually?
+    arr[counter] = str;
+    counter++;
+
+    if (strcmp(str, "print") == 0) {
+
+}
