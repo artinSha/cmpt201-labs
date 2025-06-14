@@ -1,0 +1,6 @@
+#include <stdint.h>
+#include <unistd.h>
+
+int main(void) { 
+  void* start = sbrk((intptr_t)256); 
+}

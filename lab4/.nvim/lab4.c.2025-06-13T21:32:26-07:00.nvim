@@ -1,0 +1,64 @@
+#define _GNU_SOURCE
+#include <stdint.h>
+#include <stdio.h>
+#include <string.h>
+#include <unistd.h>
+
+#define BUF_SIZE 256
+
+struct header {
+  uint64_t size;
+  struct header *next;
+};
+
+void print_out(char *format, void *data, size_t data_size) {
+  char buf[BUF_SIZE];
+  ssize_t len = snprintf(buf, BUF_SIZE, format,
+                         data_size == sizeof(uint64_t) ? *(uint64_t *)data
+                                                       : *(void **)data);
+  if (len < 0) {
+    perror("print_out failed");
+  }
+  write(STDOUT_FILENO, buf, len);
+}
+
+int main(void) {
+  void *start = sbrk((intptr_t)256);
+
+  struct header *header1 = (struct header *)start;
+  header1->next = NULL;
+  header1->size = 128;
+
+  struct header *header2 = (struct header *)(start + 128);
+  header2->next = header1;
+  header2->size = 128;
+
+  print_out("first block: %p\n", &header1, sizeof(header1));
+  print_out("second blocK: %p\n", &header2, sizeof(header2));
+
+  print_out("first block size: %p\n", &(header1->size), sizeof(header1->size));
+  print_out("first block next: %p\n", &(header1->next), sizeof(header2->next));
+
+  print_out("second block size: %p\n", &(header2->size), sizeof(header2->size));
+  print_out("second block next: %p\n", &(header2->next), sizeof(header2->next));
+
+  size_t rem_bytes_in_block = 128 - sizeof(struct header);
+
+  memset((header1 + 1), 0, rem_bytes_in_block);
+  memset((header2 + 1), 0, rem_bytes_in_block);
+
+  unsigned char *byte_ptr = (unsigned char *)(header1 + 1);
+  for (size_t i = 0; i < rem_bytes_in_block; i++) {
+    byte_ptr += i;
+    print_out("0x%02x\n", byte_ptr, sizeof(byte_ptr));
+  }
+
+  print_out("first block: %p\n", &header1, sizeof(header1));
+  print_out("second blocK: %p\n", &header2, sizeof(header2));
+
+  print_out("first block size: %p\n", &(header1->size), sizeof(header1->size));
+  print_out("first block next: %p\n", &(header1->next), sizeof(header2->next));
+
+  print_out("second block size: %p\n", &(header2->size), sizeof(header2->size));
+  print_out("second block next: %p\n", &(header2->next), sizeof(header2->next));
+}
